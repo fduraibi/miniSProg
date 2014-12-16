@@ -33,13 +33,16 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    QString program = "kcalc";
+    QString program = "/bin/yum";
     QStringList arguments;
-    arguments << "--caption \"hi\"";
+    arguments.append("provides ");
+    arguments.append("*/qt");
 
     //proc->setWorkingDirectory(MainDir);
     //proc->setStandardOutputFile(MainDir + "/...");
+    //    setEnvironment
     proc->start(program, arguments);
+    //proc->start(program);
 
 }
 
@@ -92,14 +95,15 @@ void MainWindow::procExited(int exitCode, QProcess::ExitStatus exitStatus){
 void MainWindow::progStandardOutput(){
     ui->label_3->setText("there is standard out");
 
-    QString abc = proc->readAllStandardError();
-    ui->plainTextEdit->appendPlainText(abc);
+    QString abc = proc->readAllStandardOutput();
+    ui->textEdit->setTextColor(Qt::green);
+    ui->textEdit->append(abc);
 }
 
 void MainWindow::progStandardError(){
     ui->label_4->setText("there is standard Error");
 
     QString abc = proc->readAllStandardError();
-        //emit outlogtext(abc);
-    ui->plainTextEdit_2->appendPlainText(abc);
+    ui->textEdit->setTextColor(Qt::red);
+    ui->textEdit->append(abc);
 }
