@@ -24,6 +24,16 @@ void MainWindow::on_pushButtonSet_clicked()
 {
     ui->label->setText("Hello FAD!");
     ui->lineEdit->setText("Hello FAD!");
+
+
+    QFileInfo checkFile("yum");
+    // check if file exists and if yes: Is it really a file and no directory?
+    if (checkFile.exists() && checkFile.isFile()) {
+        ui->lineEdit->setText("Yes it is there");
+    } else {
+        ui->lineEdit->setText("COULDN'T FIND IT");
+    }
+
 }
 
 void MainWindow::on_actionExit_triggered()
@@ -35,7 +45,7 @@ void MainWindow::on_pushButton_2_clicked()
 {
     QString program = "/bin/yum";
     QStringList arguments;
-    arguments.append("provides ");
+    arguments.append("provides");
     arguments.append("*/qt");
 
     //proc->setWorkingDirectory(MainDir);
