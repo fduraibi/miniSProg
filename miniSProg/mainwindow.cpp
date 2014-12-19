@@ -144,7 +144,7 @@ void MainWindow::on_pushButton_Program_clicked()
         QStringList arguments;
         arguments.append("-c");
         arguments.append("ftdi");
-        arguments.append(ui->lineEdit_xc3sprog->text());
+        arguments.append(ui->lineEdit_bitfile->text());
 
         //proc->setWorkingDirectory(MainDir);
         //proc->setStandardOutputFile(MainDir + "/...");
