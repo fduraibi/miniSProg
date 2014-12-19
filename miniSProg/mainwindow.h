@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QFileInfo>
+#include <QFileDialog>
 
 namespace Ui {
 class MainWindow;
@@ -19,17 +20,20 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_pushButtonSet_clicked();
-
     void on_actionExit_triggered();
-
-    void on_pushButton_2_clicked();
 
     void procStarted();
     void procError(QProcess::ProcessError procError);
     void procExited(int exitCode, QProcess::ExitStatus exitStatus);
     void progStandardOutput();
     void progStandardError();
+
+    void on_toolBtnProg_clicked();
+    void on_toolBtnBit_clicked();
+
+    void on_checkBox_details_stateChanged(int status);
+
+    void on_pushButton_Program_clicked();
 
 private:
     Ui::MainWindow *ui;
