@@ -38,6 +38,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QProcess * proc;
+
+    void setDefaultConsoleColor();
 };
 
 #endif // MAINWINDOW_H

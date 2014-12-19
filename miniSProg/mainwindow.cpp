@@ -14,17 +14,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(proc, SIGNAL(readyReadStandardOutput()), this, SLOT(progStandardOutput()));
     connect(proc, SIGNAL(readyReadStandardError()), this, SLOT(progStandardError()));
 
-    // Set background color to black, and text to off-white
-    ui->textEdit->setStyleSheet("QTextEdit { background-color: rgb(0, 0, 0) ;	color: rgb(208, 208, 208);}");
+    setDefaultConsoleColor();
 
     // Check if "xc3sprog" exist in the same folder with this application
     QFileInfo checkFile("./xc3sprog");
     // check if file exists and if yes: Is it really a file and no directory?
     if (checkFile.exists() && checkFile.isFile()) {
-        ui->textEdit->append("Yes it is there");
         ui->lineEdit_xc3sprog->setText("./xc3sprog");
-    } else {
-        ui->textEdit->append("COULDN'T FIND IT");
     }
 }
 
@@ -33,29 +29,25 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-//void MainWindow::on_pushButton()
-//{
-//    QFileInfo checkFile("xc3sprog");
-//    // check if file exists and if yes: Is it really a file and no directory?
-//    if (checkFile.exists() && checkFile.isFile()) {
-//        ui->textEdit->append("Yes it is there");
-//    } else {
-//        ui->textEdit->append("COULDN'T FIND IT");
-//    }
-
-//}
+void MainWindow::setDefaultConsoleColor(){
+    // Set background color to black, and text to white
+    ui->textEdit->setStyleSheet("QTextEdit { background-color: rgb(0, 0, 0) ;	color: rgb(255, 255, 255);}");
+    ui->textEdit->setTextColor(Qt::white);
+}
 
 void MainWindow::on_actionExit_triggered()
 {
     qApp->quit();
 }
 
-void MainWindow::procStarted(){
+void MainWindow::procStarted()
+{
     ui->textEdit->append("Started");
 
 }
 
-void MainWindow::procError(QProcess::ProcessError procError){
+void MainWindow::procError(QProcess::ProcessError procError)
+{
     ui->textEdit->append("Error!!!");
     ui->textEdit->append(proc->errorString());
 
@@ -77,7 +69,8 @@ void MainWindow::procError(QProcess::ProcessError procError){
 
 }
 
-void MainWindow::procExited(int exitCode, QProcess::ExitStatus exitStatus){
+void MainWindow::procExited(int exitCode, QProcess::ExitStatus exitStatus)
+{
     ui->textEdit->append("Exited");
     ui->textEdit->append(QString::number(exitCode));
 
@@ -96,19 +89,17 @@ void MainWindow::procExited(int exitCode, QProcess::ExitStatus exitStatus){
 
 }
 
-void MainWindow::progStandardOutput(){
-    ui->textEdit->append("there is standard out");
-
+void MainWindow::progStandardOutput()
+{
     QString abc = proc->readAllStandardOutput();
-    ui->textEdit->setTextColor(Qt::green);
+    //ui->textEdit->setTextColor(Qt::green);
     ui->textEdit->append(abc);
 }
 
-void MainWindow::progStandardError(){
-    ui->textEdit->append("there is standard Error");
-
+void MainWindow::progStandardError()
+{
     QString abc = proc->readAllStandardError();
-    ui->textEdit->setTextColor(Qt::red);
+    //ui->textEdit->setTextColor(Qt::red);
     ui->textEdit->append(abc);
 }
 
@@ -142,18 +133,23 @@ void MainWindow::on_pushButton_Program_clicked()
 {
     if (ui->lineEdit_xc3sprog->text().isEmpty()) {
         ui->textEdit->setTextColor(Qt::red);
-        ui->textEdit->append("ERROR: Set the xc3sprog path first.");
-
+        ui->textEdit->append("ERROR: Select the xc3sprog path first.");
+        setDefaultConsoleColor();
+    } else if (ui->lineEdit_bitfile->text().isEmpty()) {
+        ui->textEdit->setTextColor(Qt::red);
+        ui->textEdit->append("ERROR: Select the bit file first.");
+        setDefaultConsoleColor();
     } else {
-        QString program = "./xc3sprog -c ftdi";
-        //QStringList arguments;
-        //arguments.append("-c");
-        //arguments.append("ftdi");
+        QString program = ui->lineEdit_xc3sprog->text();
+        QStringList arguments;
+        arguments.append("-c");
+        arguments.append("ftdi");
+        arguments.append(ui->lineEdit_xc3sprog->text());
 
         //proc->setWorkingDirectory(MainDir);
         //proc->setStandardOutputFile(MainDir + "/...");
         //    setEnvironment
-        //proc->start(program, arguments);
-        proc->start(program);
+        proc->start(program, arguments);
+        //proc->start(program);
     }
 }
