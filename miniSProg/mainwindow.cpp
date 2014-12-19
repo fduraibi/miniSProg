@@ -71,7 +71,7 @@ void MainWindow::procError(QProcess::ProcessError procError)
 
 void MainWindow::procExited(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    ui->textEdit->append("Exited");
+    ui->textEdit->append("Done.");
     ui->textEdit->append(QString::number(exitCode));
 
 //    if ( myProcess->exitStatus() == 0)
