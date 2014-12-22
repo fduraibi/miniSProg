@@ -19,15 +19,24 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setDefaultConsoleColor();
 
-    // Check if "xc3sprog" exist in the same folder with this application
-    QFileInfo checkFile("./xc3sprog");
+    QString xc3sprog_path = "";
+    QFileInfo xc3sprog_file;
+    QSettings settings("fad", "miniSProg");
+    xc3sprog_path = settings.value("xc3sprog_path").toString();
+
+    if (xc3sprog_path.isEmpty()){
+        // Check if "xc3sprog" exist in the same folder with this application
+        xc3sprog_file.setFile("./xc3sprog");
+    } else {
+        xc3sprog_file.setFile(xc3sprog_path);
+    }
 
     //ui->textEdit->append(checkFile.absoluteFilePath());
     //ui->textEdit->append(checkFile.canonicalFilePath());
 
     // check if file exists and if yes: Is it really a file and no directory?
-    if (checkFile.exists() && checkFile.isFile()) {
-        ui->lineEdit_xc3sprog->setText("./xc3sprog");
+    if (xc3sprog_file.exists() && xc3sprog_file.isFile()) {
+        ui->lineEdit_xc3sprog->setText(xc3sprog_file.canonicalFilePath());
     }
 }
 
@@ -116,6 +125,9 @@ void MainWindow::on_toolBtnProg_clicked()
 {
     QString xc3sprog_path = QFileDialog::getOpenFileName(this, tr("Select the xc3sprog file"),"./","xc3sprog (xc3sprog)");
     ui->lineEdit_xc3sprog->setText(xc3sprog_path);
+
+    QSettings settings("fad", "miniSProg");
+    settings.setValue("xc3sprog_path", xc3sprog_path);
 }
 
 void MainWindow::on_toolBtnBit_clicked()
@@ -152,11 +164,6 @@ void MainWindow::on_pushButton_Program_clicked()
         arguments.append("-c");
         arguments.append("ftdi");
         arguments.append(ui->lineEdit_bitfile->text());
-
-        //proc->setWorkingDirectory(MainDir);
-        //proc->setStandardOutputFile(MainDir + "/...");
-        //    setEnvironment
         proc->start(program, arguments);
-        //proc->start(program);
     }
 }

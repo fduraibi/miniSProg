@@ -6,6 +6,7 @@
 #include <QProcess>
 #include <QFileInfo>
 #include <QFileDialog>
+#include <QSettings>
 
 namespace Ui {
 class MainWindow;
