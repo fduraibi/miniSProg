@@ -8,6 +8,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // Using this to make it resize when hiding the console
+    //this->layout()->setSizeConstraint(QLayout::SetFixedSize);
+
     connect(proc, SIGNAL(started()),this, SLOT(procStarted()));
     connect(proc, SIGNAL(error(QProcess::ProcessError)),this, SLOT(procError(QProcess::ProcessError)));
     connect(proc, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(procExited(int,QProcess::ExitStatus)));
@@ -18,6 +21,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Check if "xc3sprog" exist in the same folder with this application
     QFileInfo checkFile("./xc3sprog");
+
+    //ui->textEdit->append(checkFile.absoluteFilePath());
+    //ui->textEdit->append(checkFile.canonicalFilePath());
+
     // check if file exists and if yes: Is it really a file and no directory?
     if (checkFile.exists() && checkFile.isFile()) {
         ui->lineEdit_xc3sprog->setText("./xc3sprog");
@@ -48,6 +55,7 @@ void MainWindow::procStarted()
 
 void MainWindow::procError(QProcess::ProcessError procError)
 {
+    ui->textEdit->setTextColor(Qt::red);
     ui->textEdit->append("Error!!!");
     ui->textEdit->append(proc->errorString());
 
@@ -67,6 +75,7 @@ void MainWindow::procError(QProcess::ProcessError procError)
         ui->textEdit->append("REALLY! Unknown Error");
       }
 
+    setDefaultConsoleColor();
 }
 
 void MainWindow::procExited(int exitCode, QProcess::ExitStatus exitStatus)
@@ -105,7 +114,7 @@ void MainWindow::progStandardError()
 
 void MainWindow::on_toolBtnProg_clicked()
 {
-    QString xc3sprog_path = QFileDialog::getOpenFileName(this, tr("Select the xc3sprog file"),"./",tr("xc3sprog"));
+    QString xc3sprog_path = QFileDialog::getOpenFileName(this, tr("Select the xc3sprog file"),"./","xc3sprog (xc3sprog)");
     ui->lineEdit_xc3sprog->setText(xc3sprog_path);
 }
 
@@ -118,11 +127,9 @@ void MainWindow::on_toolBtnBit_clicked()
 void MainWindow::on_checkBox_details_stateChanged(int status)
 {
     // status 0 => Hide, 2 => Show
-    ui->textEdit->append(QString::number(status));
-
     if (status == 0) {
         ui->textEdit->setVisible(false);
-
+        QMetaObject::invokeMethod(this, "adjustSize", Qt::QueuedConnection);
 
     } else {
         ui->textEdit->setVisible(true);

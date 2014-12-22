@@ -14,6 +14,7 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+    Q_INVOKABLE void adjustSize() { QWidget::adjustSize(); }
 
 public:
     explicit MainWindow(QWidget *parent = 0);
