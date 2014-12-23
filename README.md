@@ -3,4 +3,4 @@ miniSProg
 
 GUI programmer for miniSpartan6+ development board
 
-***This is a very early development and the application currently is useless.***
+The application uses xc3sprog to function, so you need to have a working copy of that application first
