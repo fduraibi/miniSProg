@@ -1,3 +1,18 @@
+/* This file is part of miniSProg.
+
+miniSProg is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 2 of the License, or
+any later version.
+
+miniSProg is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with miniSProg.  If not, see <http://www.gnu.org/licenses/>. */
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -7,9 +22,6 @@ MainWindow::MainWindow(QWidget *parent) :
     proc(new QProcess(this))
 {
     ui->setupUi(this);
-
-    // Using this to make it resize when hiding the console
-    //this->layout()->setSizeConstraint(QLayout::SetFixedSize);
 
     connect(proc, SIGNAL(started()),this, SLOT(procStarted()));
     connect(proc, SIGNAL(error(QProcess::ProcessError)),this, SLOT(procError(QProcess::ProcessError)));
@@ -21,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QString xc3sprog_path = "";
     QFileInfo xc3sprog_file;
-    QSettings settings("fad", "miniSProg");
+    QSettings settings("ScarabHardware", "miniSProg");
     xc3sprog_path = settings.value("xc3sprog_path").toString();
 
     if (xc3sprog_path.isEmpty()){
@@ -30,9 +42,6 @@ MainWindow::MainWindow(QWidget *parent) :
     } else {
         xc3sprog_file.setFile(xc3sprog_path);
     }
-
-    //ui->textEdit->append(checkFile.absoluteFilePath());
-    //ui->textEdit->append(checkFile.canonicalFilePath());
 
     // check if file exists and if yes: Is it really a file and no directory?
     if (xc3sprog_file.exists() && xc3sprog_file.isFile()) {
@@ -58,30 +67,29 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::procStarted()
 {
-    ui->textEdit->append("Started");
-
+    //ui->textEdit->append("Started");
 }
 
 void MainWindow::procError(QProcess::ProcessError procError)
 {
     ui->textEdit->setTextColor(Qt::red);
-    ui->textEdit->append("Error!!!");
+    ui->textEdit->append(tr("Error!!!"));
     ui->textEdit->append(proc->errorString());
 
     switch (procError) {
       case QProcess::FailedToStart:
-        ui->textEdit->append("Failed to start");
+        ui->textEdit->append(tr("Failed to start"));
         break;
       case QProcess::Crashed:
-        ui->textEdit->append("Crashed");
+        ui->textEdit->append(tr("Crashed"));
         break;
     case QProcess::Timedout:
-        ui->textEdit->append("Timedout");
+        ui->textEdit->append(tr("Timedout"));
         break;
     case QProcess::UnknownError:
-        ui->textEdit->append("Unknown Error");
+        ui->textEdit->append(tr("Unknown Error"));
       default:
-        ui->textEdit->append("REALLY! Unknown Error");
+        ui->textEdit->append(tr("REALLY! Unknown Error"));
       }
 
     setDefaultConsoleColor();
@@ -90,7 +98,7 @@ void MainWindow::procError(QProcess::ProcessError procError)
 void MainWindow::procExited(int exitCode, QProcess::ExitStatus exitStatus)
 {
     ui->textEdit->append("Done.");
-    ui->textEdit->append(QString::number(exitCode));
+    //ui->textEdit->append(QString::number(exitCode));
 
 //    if ( myProcess->exitStatus() == 0)
 //    {
@@ -110,14 +118,12 @@ void MainWindow::procExited(int exitCode, QProcess::ExitStatus exitStatus)
 void MainWindow::progStandardOutput()
 {
     QString abc = proc->readAllStandardOutput();
-    //ui->textEdit->setTextColor(Qt::green);
     ui->textEdit->append(abc);
 }
 
 void MainWindow::progStandardError()
 {
     QString abc = proc->readAllStandardError();
-    //ui->textEdit->setTextColor(Qt::red);
     ui->textEdit->append(abc);
 }
 
@@ -126,7 +132,7 @@ void MainWindow::on_toolBtnProg_clicked()
     QString xc3sprog_path = QFileDialog::getOpenFileName(this, tr("Select the xc3sprog file"),"./","xc3sprog (xc3sprog)");
     ui->lineEdit_xc3sprog->setText(xc3sprog_path);
 
-    QSettings settings("fad", "miniSProg");
+    QSettings settings("ScarabHardware", "miniSProg");
     settings.setValue("xc3sprog_path", xc3sprog_path);
 }
 
@@ -141,6 +147,7 @@ void MainWindow::on_checkBox_details_stateChanged(int status)
     // status 0 => Hide, 2 => Show
     if (status == 0) {
         ui->textEdit->setVisible(false);
+        // Using this to make it resize when hiding the console
         QMetaObject::invokeMethod(this, "adjustSize", Qt::QueuedConnection);
 
     } else {
@@ -152,11 +159,11 @@ void MainWindow::on_pushButton_Program_clicked()
 {
     if (ui->lineEdit_xc3sprog->text().isEmpty()) {
         ui->textEdit->setTextColor(Qt::red);
-        ui->textEdit->append("ERROR: Select the xc3sprog path first.");
+        ui->textEdit->append(tr("ERROR: Select the xc3sprog path first."));
         setDefaultConsoleColor();
     } else if (ui->lineEdit_bitfile->text().isEmpty()) {
         ui->textEdit->setTextColor(Qt::red);
-        ui->textEdit->append("ERROR: Select the bit file first.");
+        ui->textEdit->append(tr("ERROR: Select the bit file first."));
         setDefaultConsoleColor();
     } else {
         QString program = ui->lineEdit_xc3sprog->text();
@@ -166,4 +173,16 @@ void MainWindow::on_pushButton_Program_clicked()
         arguments.append(ui->lineEdit_bitfile->text());
         proc->start(program, arguments);
     }
+}
+
+void MainWindow::on_actionAbout_triggered()
+{
+    QString myTitle = "misiSProg";
+    QString myBody = tr("<b>miniSProg by Scarab hardware</b><br><br>"
+                        "A simple interface for 'xc3sprog' designed for<br>"
+                        "the FPGA board miniSpartan6+.<br><br>"
+                        "Source code: <a href='https://github.com/fduraibi/miniSProg'>https://github.com/fduraibi/miniSProg</a><br>"
+                        "Developed by: Fahad Alduraibi<br>"
+                        "v1.0");
+    QMessageBox::about(this, myTitle, myBody);
 }
