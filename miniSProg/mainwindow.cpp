@@ -171,6 +171,11 @@ void MainWindow::on_pushButton_Program_clicked()
         arguments.append("-c");
         arguments.append("ftdi");
         arguments.append(ui->lineEdit_bitfile->text());
+
+        // Print the execute command and the parameters to the console before executing it, should help the user debug and find problems easily
+        ui->textEdit->setTextColor(Qt::green);
+        ui->textEdit->append("-------------------------\n\n# " + program + " -c ftdi \"" + ui->lineEdit_bitfile->text() + "\"\n");
+        setDefaultConsoleColor();
         proc->start(program, arguments);
     }
 }
