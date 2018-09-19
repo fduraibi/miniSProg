@@ -23,7 +23,7 @@ When you start up the application it will look into its current folder to find
 the xc3sprog execuatable, if it is not there then you have to tell it where to 
 find that file (it has to be with that exact name). Next you need to select the 
 bit file (must have ".bit" extension) then click on 'Program'. The details 
-console will show the result, check it to see if it was successful or it 
+console will show the result, check it to see if it was successful or if 
 there was any error.
 
 
